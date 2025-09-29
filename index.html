@@ -3,48 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connector - English Connectors Game</title>
-  <link rel="stylesheet" href="/style.css" />
-  <script src="/socket.io/socket.io.js"></script>
-  <script defer src="/script.js"></script>
+  <title>English Quiz Game</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+
 </head>
 <body>
   <div class="container">
 
-    <!-- Pantalla de ingreso -->
     <section id="join-screen" class="screen active">
-      <h1>Connector Clash</h1>
-      <p>Enter your name to join the game</p>
-      <input type="text" id="player-name" placeholder="Your name" maxlength="20" autocomplete="off" />
-      <button id="join-btn" disabled>Join Game</button>
-      <!-- Botón Start Game se agrega dinámicamente -->
+      <h1>English Quiz</h1>
+      <button id="start-btn">Start Game</button>
     </section>
 
-    <!-- Pantalla de espera -->
-    <section id="waiting-screen" class="screen">
-      <h2>Waiting for the admin to start the game...</h2>
-      <p id="admin-message"></p>
-    </section>
-
-    <!-- Pantalla de preguntas -->
-    <section id="question-screen" class="screen">
+    <section id="question-screen" class="screen hidden">
       <h2 id="question-number"></h2>
       <div id="timer"></div>
       <p id="question-text"></p>
       <div id="options-container"></div>
     </section>
 
-    <!-- Pantalla de game over -->
-    <section id="gameover-screen" class="screen">
+    <section id="gameover-screen" class="screen hidden">
       <p id="final-score"></p>
-      <button id="view-leaderboard-btn">View Leaderboard</button>
-      <button id="play-again-btn-gameover">Play Again</button>
-    </section>
-
-    <!-- Pantalla de leaderboard -->
-    <section id="leaderboard-screen" class="screen">
-      <ul id="leaderboard-list"></ul>
-      <button id="play-again-btn-leaderboard">Play Again</button>
+      <button onclick="location.reload()">Play Again</button>
     </section>
 
   </div>

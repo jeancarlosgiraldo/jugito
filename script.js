@@ -1,170 +1,110 @@
-const socket = io();
+// 25 preguntas incluidas
+const questions = [
+  { id: 1, text: "She was tired, ___ she went to bed early.", options: ["although","so","but","because"], correct: "so" },
+  { id: 2, text: "I studied hard; ___, I passed the test.", options: ["however","therefore","because","although"], correct: "therefore" },
+  { id: 3, text: "___ he was late, he still got the job.", options: ["Because","Although","Therefore","And"], correct: "Although" },
+  { id: 4, text: "I didn’t go to the party ___ I was sick.", options: ["so","although","because","but"], correct: "because" },
+  { id: 5, text: "He is rich ___ not happy.", options: ["and","but","so","because"], correct: "but" },
+  { id: 6, text: "I will go ___ it rains.", options: ["unless","if","even if","because"], correct: "even if" },
+  { id: 7, text: "___ she tried her best, she failed the test.", options: ["Although","Because","So","And"], correct: "Although" },
+  { id: 8, text: "He didn’t study; ___, he failed.", options: ["because","so","therefore","although"], correct: "therefore" },
+  { id: 9, text: "She talks a lot ___ she is very shy.", options: ["but","because","so","and"], correct: "but" },
+  { id: 10, text: "You can come with us ___ you want.", options: ["unless","if","because","although"], correct: "if" },
+  { id: 11, text: "We missed the bus ___ we left home late.", options: ["although","because","but","so"], correct: "because" },
+  { id: 12, text: "It was raining; ___, we went hiking.", options: ["however","because","so","although"], correct: "however" },
+  { id: 13, text: "They studied hard ___ they failed.", options: ["although","because","so","if"], correct: "although" },
+  { id: 14, text: "I won't go ___ it stops raining.", options: ["unless","if","because","although"], correct: "unless" },
+  { id: 15, text: "She loves him ___ he doesn't love her.", options: ["although","because","so","if"], correct: "although" },
+  { id: 16, text: "He is tired ___ he worked all day.", options: ["because","but","so","although"], correct: "because" },
+  { id: 17, text: "He worked hard ___ he could pass the exam.", options: ["because","so that","although","but"], correct: "so that" },
+  { id: 18, text: "We can go out ___ you finish your homework.", options: ["so","if","although","because"], correct: "if" },
+  { id: 19, text: "I bought a jacket ___ it was cold.", options: ["because","although","so","and"], correct: "because" },
+  { id: 20, text: "___ he was rich, he lived a simple life.", options: ["Although","Because","So","If"], correct: "Although" },
+  { id: 21, text: "I didn't go swimming ___ the water was too cold.", options: ["because","so","although","if"], correct: "because" },
+  { id: 22, text: "___ you arrive early, you can help me.", options: ["If","Although","Because","Unless"], correct: "If" },
+  { id: 23, text: "They were hungry, ___ they ordered pizza.", options: ["so","because","although","if"], correct: "so" },
+  { id: 24, text: "He likes tea ___ he doesn't like coffee.", options: ["but","and","so","because"], correct: "but" },
+  { id: 25, text: "___ it was raining, we went outside.", options: ["Although","Because","If","Unless"], correct: "Although" }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
 
 // Pantallas
 const joinScreen = document.getElementById("join-screen");
-const waitingScreen = document.getElementById("waiting-screen");
 const questionScreen = document.getElementById("question-screen");
 const gameOverScreen = document.getElementById("gameover-screen");
-const leaderboardScreen = document.getElementById("leaderboard-screen");
-const adminPanel = document.getElementById("admin-panel");
 
-// Elementos
-const joinBtn = document.getElementById("join-btn");
-const nameInput = document.getElementById("player-name");
+// Elementos de pregunta
+const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
-const questionNumber = document.getElementById("question-number");
-const timerElement = document.getElementById("timer");
-const leaderboardList = document.getElementById("leaderboard-list");
 const finalScore = document.getElementById("final-score");
 
-// Botones
-const playAgainBtn = document.getElementById("play-again-btn"); // GameOver
-const viewLeaderboardBtn = document.getElementById("view-leaderboard-btn");
-const playAgainBtnLeaderboard = document.getElementById("play-again-btn-leaderboard");
+// Botón de inicio
+const startBtn = document.getElementById("start-btn");
+startBtn.addEventListener("click", startGame);
 
-// Admin
-const adminQuestion = document.getElementById("admin-question");
-const adminLeaderboard = document.getElementById("admin-leaderboard");
-
-const ADMIN_NAME = "elmochito";
-let currentQuestion = null;
-let questionCount = 0;
-let timer;
-
-// Habilitar botón si hay texto
-nameInput.addEventListener("input", () => {
-  joinBtn.disabled = nameInput.value.trim() === "";
-});
-
-// Unirse al juego
-joinBtn.addEventListener("click", () => {
-  const name = nameInput.value.trim();
-  if (!name) return;
-
-  socket.emit("joinGame", name);
-
-  if (name === ADMIN_NAME) {
-    showAdminPanel();
-  } else {
-    joinScreen.classList.add("hidden");
-    waitingScreen.classList.remove("hidden");
-  }
-});
-
-// Mostrar panel admin
-function showAdminPanel() {
-  const startBtn = document.createElement("button");
-  startBtn.textContent = "Start Game";
-  startBtn.style.marginTop = "10px";
-  joinScreen.appendChild(startBtn);
-
-  startBtn.addEventListener("click", () => {
-    socket.emit("startGame");
-    startBtn.style.display = "none";
-    joinScreen.classList.add("hidden");
-    questionScreen.classList.remove("hidden");
-    adminPanel.classList.remove("hidden");
-  });
-
-  alert("Welcome Admin! Click 'Start Game' when ready.");
+// Iniciar juego
+function startGame() {
+  joinScreen.classList.add("hidden");
+  questionScreen.classList.remove("hidden");
+  currentQuestionIndex = 0;
+  score = 0;
+  showQuestion();
 }
 
-// Recibir pregunta
-socket.on("newQuestion", (question) => {
-  currentQuestion = question;
-  questionCount++;
-  renderQuestion(question);
-  startTimer();
-
-  // Admin ve la pregunta
-  if (adminPanel) {
-    adminQuestion.textContent = `Pregunta actual: ${question.text}`;
-  }
-});
-
-// Fin de juego
-socket.on("gameOver", (data) => {
-  questionScreen.classList.add("hidden");
-  gameOverScreen.classList.remove("hidden");
-
-  finalScore.textContent = "Game Over!";
-
-  leaderboardList.innerHTML = "";
-  data.leaderboard.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent = `${p.name}: ${p.score}`;
-    leaderboardList.appendChild(li);
-  });
-
-  // Admin leaderboard
-  if (adminLeaderboard) {
-    adminLeaderboard.innerHTML = "";
-    data.leaderboard.forEach(p => {
-      const li = document.createElement("li");
-      li.textContent = `${p.name}: ${p.score}`;
-      adminLeaderboard.appendChild(li);
-    });
-  }
-});
-
-// Respuesta correcta/incorrecta desde el server
-socket.on("answerResult", ({ correct, selected }) => {
-  const buttons = optionsContainer.querySelectorAll("button");
-  buttons.forEach(btn => {
-    btn.disabled = true; // bloquear botones
-    if (btn.textContent === selected) {
-      btn.classList.add(correct ? "correct" : "incorrect");
-    }
-  });
-});
-
-// Renderizar pregunta
-function renderQuestion(question) {
+// Mostrar pregunta
+function showQuestion() {
+  const question = questions[currentQuestionIndex];
+  questionNumber.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
   questionText.textContent = question.text;
-  questionNumber.textContent = `Question ${questionCount}`;
   optionsContainer.innerHTML = "";
 
-  question.options.forEach(opt => {
+  question.options.forEach(option => {
     const btn = document.createElement("button");
+    btn.textContent = option;
     btn.classList.add("option-btn");
-    btn.textContent = opt;
-    btn.addEventListener("click", () => {
-      socket.emit("submitAnswer", { questionId: question.id, answer: opt });
-      clearInterval(timer);
-      // Bloquea todos los botones inmediatamente
-      optionsContainer.querySelectorAll("button").forEach(b => b.disabled = true);
-    });
+    btn.addEventListener("click", () => selectAnswer(option, btn));
     optionsContainer.appendChild(btn);
   });
 }
 
-// Timer
-function startTimer() {
-  let timeLeft = 10;
-  timerElement.textContent = timeLeft;
-  timer = setInterval(() => {
-    timeLeft--;
-    timerElement.textContent = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      optionsContainer.querySelectorAll("button").forEach(b => b.disabled = true);
+// Seleccionar respuesta
+function selectAnswer(answer, btn) {
+  const question = questions[currentQuestionIndex];
+
+  // Deshabilitar todos los botones
+  const allButtons = optionsContainer.querySelectorAll("button");
+  allButtons.forEach(b => b.disabled = true);
+
+  if (answer === question.correct) {
+    btn.classList.add("correct");
+    score++;
+  } else {
+    btn.classList.add("wrong");
+    // Mostrar cuál era la correcta
+    allButtons.forEach(b => {
+      if (b.textContent === question.correct) {
+        b.classList.add("correct");
+      }
+    });
+  }
+
+  // Esperar 1 segundo antes de pasar a la siguiente pregunta
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      showGameOver();
     }
   }, 1000);
 }
 
-// Botones finales
-if (playAgainBtn) {
-  playAgainBtn.addEventListener("click", () => window.location.reload());
-}
-
-if (viewLeaderboardBtn) {
-  viewLeaderboardBtn.addEventListener("click", () => {
-    gameOverScreen.classList.add("hidden");
-    leaderboardScreen.classList.remove("hidden");
-  });
-}
-
-if (playAgainBtnLeaderboard) {
-  playAgainBtnLeaderboard.addEventListener("click", () => window.location.reload());
+// Juego terminado
+function showGameOver() {
+  questionScreen.classList.add("hidden");
+  gameOverScreen.classList.remove("hidden");
+  finalScore.textContent = `Your score: ${score} / ${questions.length}`;
 }
