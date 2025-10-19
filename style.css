@@ -1,0 +1,286 @@
+/* =========================
+   🎮 ESTILOS GENERALES
+========================= */
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #21509c, #010004);
+  height: 100vh;
+  margin: 0;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* =========================
+   📱 PANTALLAS (start, quiz, end)
+========================= */
+.screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: linear-gradient(135deg, #5a80bd, #02396c);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px;
+  transition: opacity 0.3s ease;
+}
+
+.hidden {
+  display: none !important;
+  opacity: 0;
+}
+
+.active {
+  display: block !important;
+  opacity: 1;
+}
+
+/* =========================
+   🧍 INPUT NOMBRE
+========================= */
+.input-group {
+  margin: 20px 0;
+}
+
+.input-group label {
+  font-size: 18px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+#player-name {
+  padding: 10px;
+  font-size: 16px;
+  width: 80%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* =========================
+   🔘 BOTONES
+========================= */
+button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  margin-top: 15px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #357ABD;
+  transform: scale(1.05);
+}
+
+/* =========================
+   ❓ PREGUNTAS Y OPCIONES
+========================= */
+#question-number {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+#question-text {
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
+  margin: 10px 0 20px;
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  color: #000;
+  transition: background 0.3s;
+}
+
+.option-btn:hover {
+  background-color: #d6e4ff;
+}
+
+/* =========================
+   ✅ CORRECTO / ❌ INCORRECTO
+========================= */
+.correct {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.wrong {
+  background-color: #e74c3c !important;
+  color: white !important;
+}
+
+/* =========================
+   🕒 TEMPORIZADOR
+========================= */
+#timer {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffcccb;
+  margin-bottom: 10px;
+}
+
+/* =========================
+   🖼️ IMÁGENES EN PREGUNTAS
+========================= */
+.image-space {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-space img {
+  width: 320px;           /* ancho uniforme */
+  height: 200px;          /* alto uniforme */
+  object-fit: cover;      /* recorta sin deformar */
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* =========================
+   🏆 SCOREBOARD (Nombre, Correctas, Tiempo)
+========================= */
+#scoreboard {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 10px 15px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  z-index: 100;
+}
+
+#scoreboard p {
+  margin: 4px 0;
+}
+
+/* =========================
+   🥇 TABLA DE CLASIFICACIÓN FINAL
+========================= */
+#leaderboard {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  margin: 0 auto;
+  color: #000;
+}
+
+#leaderboard h2 {
+  font-size: 28px;
+  color: #02396c;
+  margin-bottom: 15px;
+}
+
+.leaderboard-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.leaderboard-table th {
+  background-color: #4a90e2;
+  color: #fff;
+  padding: 10px;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.leaderboard-table td {
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.leaderboard-table tr:hover td {
+  background-color: #e1efff;
+}
+
+/* =========================
+   🔁 BOTÓN “TRY AGAIN” FINAL
+========================= */
+#try-again-btn {
+  background-color: #2ecc71;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #fff;
+  border: none;
+  transition: 0.3s ease;
+}
+
+#try-again-btn:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
+
+#gameover-screen {
+  text-align: center;
+}
+
+#leaderboard {
+  margin-top: 20px;
+}
+
+#try-again-btn {
+  margin-top: 20px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#try-again-btn:hover {
+  background-color: #2563eb;
+}
+#final-score:empty {
+  display: none;
+}
+
+#final-score:empty {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
