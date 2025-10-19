@@ -3,7 +3,14 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// 🔹 Usar solo el puerto que Railway asigna
+const PORT = process.env.PORT;
+if (!PORT) {
+  console.error("❌ Error: no se detecta PORT. Esto solo funciona en Railway.");
+  process.exit(1);
+}
+
 const RANKING_FILE = path.join(__dirname, "ranking.json");
 
 // Middleware
@@ -72,5 +79,5 @@ app.post("/api/ranking", (req, res) => {
 
 // ==================== INICIAR SERVIDOR ====================
 app.listen(PORT, () => {
-  console.log(`✅ Quiz corriendo en http://localhost:${PORT}`);
+  console.log(`✅ Quiz corriendo en Railway en el puerto ${PORT}`);
 });
